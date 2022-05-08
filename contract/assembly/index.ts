@@ -6,7 +6,7 @@ export function grant_minter(account_id:string):void{
 
   let nftArgs:Minter = {account_id};
   let promise = ContractPromise.create(
-    "panda.mintspace2.testnet", // contract account name
+    "storespiritbro.mintspace2.testnet", // your store name
     "grant_minter", // contract method name
     nftArgs.encode(), // serialized contract method arguments encoded as Uint8Array
     20e12,

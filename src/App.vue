@@ -1,22 +1,55 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
+
 
 <template>
   <header>
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+     <button @click="signIn" v-if="!login">Login</button>
+     <button v-if="login">Logout</button>
+     <input v-if="login" type="file" />
+     <button v-if="login">MINT</button>
     </div>
   </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+<ul>
+  <li v-for="(i,key) in item" :key="key">
+    {{i}}
+  </li>
+</ul>
+ 
 </template>
-
+<script setup>
+import {ref,onMounted} from 'vue';
+import * as nearAPI from "near-api-js";
+const login=ref(false)
+const item=ref([])
+const wallet=ref(false)
+onMounted(async ()=>{
+   const { connect, keyStores, WalletConnection } = nearAPI;
+    const config = {
+      networkId: "testnet",
+      keyStore: new keyStores.BrowserLocalStorageKeyStore(),
+      nodeUrl: "https://rpc.testnet.near.org",
+      walletUrl: "https://wallet.testnet.near.org",
+      helperUrl: "https://helper.testnet.near.org",
+      explorerUrl: "https://explorer.testnet.near.org",
+    };
+    const near = await connect(config);
+    wallet.value = new WalletConnection(near);
+    if (this.wallet.isSignedIn()) {
+     login.value=true;
+    }
+})
+const signIn=()=>{
+  this.wallet.requestSignIn(
+        "fooddonatenft.testnet"
+      );
+}
+const signOut=async ()=>{
+await this.wallet.signOut();
+      window.location.href="/";
+}
+</script>
 <style>
 @import './assets/base.css';
 
